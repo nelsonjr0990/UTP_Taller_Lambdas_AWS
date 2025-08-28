@@ -1,4 +1,5 @@
 {
+  "name": "Nelson Jr",
   "body": "{\"message\": \"hello world\"}",
   "resource": "/hello",
   "path": "/hello",
@@ -58,5 +59,13 @@
     "httpMethod": "POST",
     "apiId": "1234567890",
     "protocol": "HTTP/1.1"
-  }
+  },
+  "numero1": 10,
+  "numero2": 5,
+  "funciones": [
+    "suma",
+    "resta",
+    "multiplicacion",
+    "division"
+  ]
 }

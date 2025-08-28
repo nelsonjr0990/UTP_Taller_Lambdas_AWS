@@ -1,42 +1,47 @@
 import json
 
-# import requests
-
-
 def lambda_handler(event, context):
-    """Sample pure Lambda function
+    try:
+        # Extraemos los parámetros del evento
+        numero1 = int(event["numero1"])  # Convertir numero1 a entero
+        numero2 = int(event["numero2"])  # Convertir numero2 a entero
+        funciones = event["funciones"]  # Array de operaciones
 
-    Parameters
-    ----------
-    event: dict, required
-        API Gateway Lambda Proxy Input Format
+        resultados = {}
 
-        Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
+        # Iterar sobre las funciones
+        for funcion in funciones:
+            funcion = funcion.lower()
+            if funcion == "suma":
+                resultados[funcion] = numero1 + numero2
+            elif funcion == "resta":
+                resultados[funcion] = numero1 - numero2
+            elif funcion == "multiplicacion":
+                resultados[funcion] = numero1 * numero2
+            elif funcion == "division":
+                if numero2 == 0:
+                    resultados[funcion] = "Error: No se puede dividir por cero"
+                else:
+                    resultados[funcion] = numero1 / numero2
+            else:
+                resultados[funcion] = "Funcion no soportada"
 
-    context: object, required
-        Lambda Context runtime methods and attributes
+        # Respuesta con todos los resultados
+        return {
+            "statusCode": 200,
+            "body": json.dumps({"resultados": resultados})
+        }
 
-        Context doc: https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
+    except (ValueError, KeyError):
+        # En caso de error en la conversión de los números o de parámetros faltantes
+        return {
+            "statusCode": 400,
+            "body": json.dumps({"error": "Entrada inválida"})
+        }
 
-    Returns
-    ------
-    API Gateway Lambda Proxy Output Format: dict
-
-        Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
-    """
-
-    # try:
-    #     ip = requests.get("http://checkip.amazonaws.com/")
-    # except requests.RequestException as e:
-    #     # Send some context about this error to Lambda Logs
-    #     print(e)
-
-    #     raise e
-
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "message": "hello world",
-            # "location": ip.text.replace("\n", "")
-        }),
-    }
+    except Exception as e:
+        # Capturamos cualquier otro error
+        return {
+            "statusCode": 500,
+            "body": json.dumps({"error": str(e)})
+        }
